@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <title>The Test</title>
+    <link href='//fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
+    <script src="/js/geolocations.js"></script>
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+         * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+        /* Optional: Makes the sample page fill the window. */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #authority-id {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<script>
+    var geocoder;
+    var map;
+    var address = "Sheffield, UK";
+    function initMap() {}
+
+    function codeAddress(geocoder, map, address) {
+        geocoder.geocode({'address': address}, function(results, status) {
+            if (status === 'OK') {
+                map.setCenter(results[0].geometry.location);
+                var marker = new google.maps.Marker({
+                    map: map,
+                    position: results[0].geometry.location
+                });
+            } else {
+                console.log('Geocode was not successful for the following reason: ' + status + '. Address : ' + address);
+
+                sleep(500);
+            }
+        });
+    }
+
+    window.onload = function () {
+
+        var map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 8,
+            center: {"lat":52.5423152,"lng":-1.6076567}
+        });
+
+        var infowindow = new google.maps.InfoWindow();
+
+        for (var key in window.places) {
+            if (window.places.hasOwnProperty(key)) {
+                console.log(key + " -> " + window.places[key]);
+
+                marker = new google.maps.Marker({
+                    map: map,
+                    position: window.places[key],
+                    title:key
+                });
+                marker.key = key;
+
+                marker.addListener('click', function() {
+                    infowindow.setContent(this.key);
+                    infowindow.open(map, this);
+                });
+            }
+        }
+    }
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAVYm5zICHF4X9sxIA731oY0ElAzqvUQ7M&callback=initMap">
+</script>
+</body>
+</html>
+
